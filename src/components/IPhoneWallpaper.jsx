@@ -19,7 +19,10 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 
 const IPhoneWallpaper = () => {
   const [url, setUrl] = useLocalStorage("spotifyUrl", "");
-  const [coverUrl, setCoverUrl] = useLocalStorage("coverUrl", "");
+  const [coverUrl, setCoverUrl] = useLocalStorage(
+    "coverUrl",
+    "https://open.spotify.com/album/6eUW0wxWtzkFdaEFsTJto6?highlight=spotify:track:4PTG3Z6ehGkBFwjybzWkR8"
+  );
   const [mainText, setMainText] = useLocalStorage("mainText", "");
   const [secondaryText, setSecondaryText] = useLocalStorage(
     "secondaryText",
