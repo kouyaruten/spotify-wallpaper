@@ -18,10 +18,13 @@ import { Slider } from "@/components/ui/slider";
 import useLocalStorage from "@/hooks/useLocalStorage";
 
 const IPhoneWallpaper = () => {
-  const [url, setUrl] = useLocalStorage("spotifyUrl", "");
+  const [url, setUrl] = useLocalStorage(
+    "spotifyUrl",
+    "https://open.spotify.com/album/6eUW0wxWtzkFdaEFsTJto6?highlight=spotify:track:4PTG3Z6ehGkBFwjybzWkR8"
+  );
   const [coverUrl, setCoverUrl] = useLocalStorage(
     "coverUrl",
-    "https://open.spotify.com/album/6eUW0wxWtzkFdaEFsTJto6?highlight=spotify:track:4PTG3Z6ehGkBFwjybzWkR8"
+    "https://i.scdn.co/image/ab67616d0000b27315ebbedaacef61af244262a8"
   );
   const [mainText, setMainText] = useLocalStorage("mainText", "");
   const [secondaryText, setSecondaryText] = useLocalStorage(
