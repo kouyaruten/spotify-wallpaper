@@ -14,7 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Wallbum",
+  title: "Spotipple",
   description: "Get Apple-Music-like Wallpapers from Spotify albums",
 };
 

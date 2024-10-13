@@ -212,14 +212,13 @@ const IPhoneWallpaper = () => {
   return (
     <div className="min-h-screen flex bg-gray-100">
       {/* 左侧面板 */}
-      <div className="w-1/3 py-8 pl-40 overflow-y-auto flex flex-col justify-center gap-8">
+      <div className="w-1/3 p-8 pl-24 overflow-y-auto flex flex-col justify-center gap-8">
         <div className="flex flex-col gap-4">
           <h1 className="text-3xl font-semibold tracking-tight">
             Get{" "}
-            <span className="font-bold bg-gradient-to-r from-pink-500 to-green-500 text-transparent bg-clip-text">
-              Apple-Music-like Wallpapers
-            </span>{" "}
-            from Spotify albums
+            <span className="font-bold text-pink-500">Apple-Music-Like</span>{" "}
+            Wallpapers from{" "}
+            <span className="font-bold text-green-500">Spotify</span> Albums
           </h1>
           <p>
             1. Open the Spotify album page
@@ -252,7 +251,7 @@ const IPhoneWallpaper = () => {
                 onValueChange={(e) => setScreenSize(e)}
                 className="w-full p-2 border rounded mt-1"
               >
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a size" />
                 </SelectTrigger>
                 <SelectContent>
