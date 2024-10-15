@@ -1,16 +1,18 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 
 async function getAccessToken() {
-  const response = await fetch('https://accounts.spotify.com/api/token', {
-    method: 'POST',
+  const response = await fetch("https://accounts.spotify.com/api/token", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: 'Basic ' + Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64'),
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization:
+        "Basic " +
+        Buffer.from(CLIENT_ID + ":" + CLIENT_SECRET).toString("base64"),
     },
-    body: 'grant_type=client_credentials',
+    body: "grant_type=client_credentials",
   });
 
   const data = await response.json();
@@ -33,22 +35,21 @@ async function getSpotifyInfo(type, id, accessToken) {
   });
 
   const data = await response.json();
-  console.log(data);
 
   let coverUrl, name;
 
   switch (type) {
-    case 'album':
-    case 'track':
+    case "album":
+    case "track":
       coverUrl = data.images?.[0]?.url || data.album?.images?.[0]?.url;
       name = data.name;
       break;
-    case 'artist':
+    case "artist":
       coverUrl = data.images?.[0]?.url;
       name = data.name;
       break;
-    case 'show':
-    case 'episode':
+    case "show":
+    case "episode":
       coverUrl = data.images?.[0]?.url;
       name = data.name || data.show?.name;
       break;
@@ -59,16 +60,18 @@ async function getSpotifyInfo(type, id, accessToken) {
 
 export async function POST(req) {
   const { url } = await req.json();
-  const urlParts = url.split('/');
+  const urlParts = url.split("/");
   const type = urlParts[urlParts.length - 2];
-  const id = urlParts[urlParts.length - 1].split('?')[0];
+  const id = urlParts[urlParts.length - 1].split("?")[0];
 
   try {
     const accessToken = await getAccessToken();
     const { coverUrl, name } = await getSpotifyInfo(type, id, accessToken);
     return NextResponse.json({ coverUrl, name });
   } catch (error) {
-    console.error('Error fetching Spotify data:', error);
-    return NextResponse.json({ error: 'Failed to fetch Spotify data' }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch Spotify data" },
+      { status: 500 }
+    );
   }
 }
