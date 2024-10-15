@@ -112,14 +112,26 @@ const IPhoneWallpaper = () => {
     canvas.height = IPHONE_HEIGHT;
 
     if (wallpaperMode === "gradient") {
-      // 现有的渐变背景绘制代码
+      // 创建更平滑的渐变
       const gradient = ctx.createLinearGradient(0, 0, 0, IPHONE_HEIGHT);
-      const lighterColor = lightenColor(mainColor, 15);
-      const darkerColor = darkenColor(mainColor, 15);
+      const steps = 10; // 增加颜色停止点的数量
 
-      gradient.addColorStop(0, `rgb(${mainColor.join(",")})`);
-      gradient.addColorStop(0.5, `rgb(${lighterColor.join(",")})`);
-      gradient.addColorStop(1, `rgb(${darkerColor.join(",")})`);
+      for (let i = 0; i <= steps; i++) {
+        const ratio = i / steps;
+        let r, g, b;
+
+        if (ratio < 0.5) {
+          // 从主色到亮色的过渡
+          const lighterColor = lightenColor(mainColor, 30 * ratio);
+          [r, g, b] = lighterColor;
+        } else {
+          // 从亮色到暗色的过渡
+          const darkerColor = darkenColor(mainColor, 30 * (ratio - 0.5));
+          [r, g, b] = darkerColor;
+        }
+
+        gradient.addColorStop(ratio, `rgb(${r}, ${g}, ${b})`);
+      }
 
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, IPHONE_WIDTH, IPHONE_HEIGHT);
@@ -343,7 +355,7 @@ const IPhoneWallpaper = () => {
         </p>
       </div>
 
-      {/* 右侧面板 */}
+      {/* 右侧���板 */}
       <div className="p-8 flex flex-col items-center justify-center gap-4">
         {coverUrl && (
           <>
