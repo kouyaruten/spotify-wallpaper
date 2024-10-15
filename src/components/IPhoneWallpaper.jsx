@@ -15,20 +15,18 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import useLocalStorage from '@/hooks/useLocalStorage';
 
 const IPhoneWallpaper = () => {
-  const [url, setUrl] = useLocalStorage(
-    'spotifyUrl',
+  const [url, setUrl] = useState(
     'https://open.spotify.com/album/6eUW0wxWtzkFdaEFsTJto6?highlight=spotify:track:4PTG3Z6ehGkBFwjybzWkR8'
   );
-  const [coverUrl, setCoverUrl] = useLocalStorage(
-    'coverUrl',
-    'https://i.scdn.co/image/ab67616d0000b27315ebbedaacef61af244262a8'
-  );
+  const [coverUrl, setCoverUrl] = useState('https://i.scdn.co/image/ab67616d0000b27315ebbedaacef61af244262a8');
   const [mainText, setMainText] = useLocalStorage('mainText', '');
-  const [secondaryText, setSecondaryText] = useLocalStorage('secondaryText', 'FictionJunction');
-  const [gradientColors, setGradientColors] = useLocalStorage('gradientColors', []);
+  const [secondaryText, setSecondaryText] = useLocalStorage('secondaryText', '');
+  const [gradientColors, setGradientColors] = useState('gradientColors', []);
   const [error, setError] = useState('');
   const canvasRef = useRef(null);
 
@@ -49,6 +47,8 @@ const IPhoneWallpaper = () => {
     'iPhone 13 & 14': { width: 1170, height: 2532 },
     Android: { width: 1236, height: 2751 },
   };
+
+  const [wallpaperMode, setWallpaperMode] = useState('gradient');
 
   const fetchCoverArt = async () => {
     setError('');
@@ -82,7 +82,7 @@ const IPhoneWallpaper = () => {
         drawWallpaper(img, mainColor);
       };
     }
-  }, [coverUrl, screenSize, coverSize, cornerRadius, coverPosition]);
+  }, [coverUrl, screenSize, coverSize, cornerRadius, coverPosition, wallpaperMode]);
 
   const drawWallpaper = (img, mainColor) => {
     const canvas = canvasRef.current;
@@ -92,32 +92,39 @@ const IPhoneWallpaper = () => {
     canvas.width = IPHONE_WIDTH;
     canvas.height = IPHONE_HEIGHT;
 
-    // 创建渐变背景
-    const gradient = ctx.createLinearGradient(0, 0, 0, IPHONE_HEIGHT);
-    const lighterColor = lightenColor(mainColor, 15);
-    const darkerColor = darkenColor(mainColor, 15);
+    if (wallpaperMode === 'gradient') {
+      // 现有的渐变背景绘制代码
+      const gradient = ctx.createLinearGradient(0, 0, 0, IPHONE_HEIGHT);
+      const lighterColor = lightenColor(mainColor, 15);
+      const darkerColor = darkenColor(mainColor, 15);
 
-    gradient.addColorStop(0, `rgb(${mainColor.join(',')})`);
-    gradient.addColorStop(0.5, `rgb(${lighterColor.join(',')})`);
-    gradient.addColorStop(1, `rgb(${darkerColor.join(',')})`);
+      gradient.addColorStop(0, `rgb(${mainColor.join(',')})`);
+      gradient.addColorStop(0.5, `rgb(${lighterColor.join(',')})`);
+      gradient.addColorStop(1, `rgb(${darkerColor.join(',')})`);
 
-    // 绘制渐变背景
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, IPHONE_WIDTH, IPHONE_HEIGHT);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, IPHONE_WIDTH, IPHONE_HEIGHT);
+    } else if (wallpaperMode === 'glassmorphism') {
+      // 毛玻璃效果
+      ctx.filter = 'blur(200px)';
+      const scale = Math.max(IPHONE_WIDTH / img.width, IPHONE_HEIGHT / img.height);
+      const scaledWidth = img.width * scale;
+      const scaledHeight = img.height * scale;
+      const offsetX = (IPHONE_WIDTH - scaledWidth) / 2;
+      const offsetY = (IPHONE_HEIGHT - scaledHeight) / 2;
+      ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
+      ctx.filter = 'none';
 
-    // 绘制专辑封面
+      // 添加黑色透明蒙版
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      ctx.fillRect(0, 0, IPHONE_WIDTH, IPHONE_HEIGHT);
+    }
+
+    // 绘制专辑封面（保持不变）
     const x = (IPHONE_WIDTH - coverSize) / 2;
     const y = coverPosition;
 
-    // 保存当前上下文状态
     ctx.save();
-
-    // 添加阴影
-    // ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
-    // ctx.shadowBlur = 40;
-    // ctx.shadowOffsetX = 0;
-    // ctx.shadowOffsetY = 20;
-    // ctx.shadowSpread = -40;
 
     // 创建圆角矩形路径
     ctx.beginPath();
@@ -132,48 +139,13 @@ const IPhoneWallpaper = () => {
     ctx.quadraticCurveTo(x, y, x + cornerRadius, y);
     ctx.closePath();
 
-    // 填充路径（这会应用阴影）
     ctx.fillStyle = 'white';
     ctx.fill();
 
-    // 移除阴影
-    ctx.shadowColor = 'transparent';
-
-    // 裁剪和绘制图像
     ctx.clip();
     ctx.drawImage(img, x, y, coverSize, coverSize);
 
-    // 恢复上下文状态
     ctx.restore();
-
-    // 如果选择显示专辑名称，则绘制文本
-    // if (showAlbumName && mainText) {
-    //   ctx.font = `600 ${fontSize}px ${fontFamily}`;
-    //   ctx.fillStyle = "white";
-    //   ctx.textAlign = "center";
-    //   ctx.textBaseline = "top";
-
-    //   // 添加文本阴影
-    //   // ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
-    //   // ctx.shadowBlur = 10;
-    //   // ctx.shadowOffsetX = 2;
-    //   // ctx.shadowOffsetY = 2;
-
-    //   // 绘制文本
-    //   const textY = y + coverSize + 60;
-    //   ctx.fillText(mainText, IPHONE_WIDTH / 2, textY);
-
-    //   // Secondary text
-    //   ctx.font = `400 ${fontSize * 0.8}px ${fontFamily}`;
-    //   const textY2 = textY + 60;
-    //   ctx.fillText(secondaryText, IPHONE_WIDTH / 2, textY2);
-
-    //   // 重置阴影
-    //   ctx.shadowColor = "transparent";
-    //   ctx.shadowBlur = 0;
-    //   ctx.shadowOffsetX = 0;
-    //   ctx.shadowOffsetY = 0;
-    // }
   };
 
   // 辅助函数：使颜色变浅
@@ -222,6 +194,11 @@ const IPhoneWallpaper = () => {
             placeholder="Enter Spotify URL"
           />
           <Button onClick={fetchCoverArt}>Generate</Button>
+          {error && (
+            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 text-sm" role="alert">
+              <p>{error}</p>
+            </div>
+          )}
         </div>
 
         {/* 控制组件 */}
@@ -281,20 +258,31 @@ const IPhoneWallpaper = () => {
                 className="w-full"
               />
             </div>
+            <div className="mb-4">
+              <label className="block text-sm mb-2">Wallpaper Mode</label>
+              <div className="flex gap-4">
+                <RadioGroup defaultValue={wallpaperMode} onValueChange={(e) => setWallpaperMode(e)}>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="gradient" id="r1" />
+                    <Label htmlFor="r1">Gradient</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="glassmorphism" id="r2" />
+                    <Label htmlFor="r2">Glassmorphism</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
           </div>
         </div>
-        {error && (
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 text-sm" role="alert">
-            <p>{error}</p>
-          </div>
-        )}
+
         <p className="text-sm text-gray-500">
           built with ♥ by{' '}
-          <a href="https://x.com/williamjinq" className="hover:text-green-500">
+          <a href="https://x.com/williamjinq" target="_blank" className="hover:text-green-500">
             @williamjinq
           </a>
           , inspired by{' '}
-          <a href="https://www.spotifycover.art/" className="hover:text-green-500">
+          <a href="https://www.spotifycover.art/" target="_blank" className="hover:text-green-500">
             spotifycover.art
           </a>
           .
