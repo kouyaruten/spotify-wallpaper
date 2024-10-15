@@ -195,14 +195,14 @@ const IPhoneWallpaper = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-100">
+    <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen bg-gray-100">
       {/* 左侧面板 */}
-      <div className="w-1/3 p-8 pl-24 overflow-y-auto flex flex-col justify-center gap-8">
+      <div className="p-16 lg:pl-24 overflow-y-auto flex flex-col justify-center gap-8">
         <div className="flex flex-col gap-4">
           <h1 className="text-3xl font-semibold tracking-tight">
             Get High-Quality Wallpapers from <span className="font-bold text-green-500">Spotify</span> Albums
           </h1>
-          <p>
+          <p className="text-gray-700">
             Step 1: Navigate to your desired Spotify content page (Choose from{' '}
             <span className="font-bold text-green-500">album, song, artist, podcast, or podcast episode</span>)
             <br />
@@ -302,7 +302,7 @@ const IPhoneWallpaper = () => {
       </div>
 
       {/* 右侧面板 */}
-      <div className="w-2/3 p-8 flex flex-col items-center justify-center gap-4">
+      <div className="p-8 flex flex-col items-center justify-center gap-4">
         {coverUrl && (
           <>
             <div className="shadow-2xl rounded-3xl overflow-hidden">

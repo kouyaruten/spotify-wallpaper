@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import IPhoneWallpaper from "../components/IPhoneWallpaper";
+import IPhoneWallpaper from '../components/IPhoneWallpaper';
 
 export default function Home() {
   return (
