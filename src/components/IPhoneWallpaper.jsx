@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useRef } from "react";
-import ColorThief from "colorthief";
-import axios from "axios";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import React, { useState, useEffect, useRef } from 'react';
+import ColorThief from 'colorthief';
+import axios from 'axios';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -13,79 +13,66 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-import useLocalStorage from "@/hooks/useLocalStorage";
+} from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import useLocalStorage from '@/hooks/useLocalStorage';
 
 const IPhoneWallpaper = () => {
   const [url, setUrl] = useLocalStorage(
-    "spotifyUrl",
-    "https://open.spotify.com/album/6eUW0wxWtzkFdaEFsTJto6?highlight=spotify:track:4PTG3Z6ehGkBFwjybzWkR8"
+    'spotifyUrl',
+    'https://open.spotify.com/album/6eUW0wxWtzkFdaEFsTJto6?highlight=spotify:track:4PTG3Z6ehGkBFwjybzWkR8'
   );
   const [coverUrl, setCoverUrl] = useLocalStorage(
-    "coverUrl",
-    "https://i.scdn.co/image/ab67616d0000b27315ebbedaacef61af244262a8"
+    'coverUrl',
+    'https://i.scdn.co/image/ab67616d0000b27315ebbedaacef61af244262a8'
   );
-  const [mainText, setMainText] = useLocalStorage("mainText", "");
-  const [secondaryText, setSecondaryText] = useLocalStorage(
-    "secondaryText",
-    "FictionJunction"
-  );
-  const [gradientColors, setGradientColors] = useLocalStorage(
-    "gradientColors",
-    []
-  );
-  const [error, setError] = useState("");
+  const [mainText, setMainText] = useLocalStorage('mainText', '');
+  const [secondaryText, setSecondaryText] = useLocalStorage('secondaryText', 'FictionJunction');
+  const [gradientColors, setGradientColors] = useLocalStorage('gradientColors', []);
+  const [error, setError] = useState('');
   const canvasRef = useRef(null);
 
   // 新增状态
-  const [screenSize, setScreenSize] = useLocalStorage(
-    "screenSize",
-    "iPhone 16"
-  );
-  const [coverSize, setCoverSize] = useLocalStorage("coverSize", 900);
-  const [cornerRadius, setCornerRadius] = useLocalStorage("cornerRadius", 100);
-  const [coverPosition, setCoverPosition] = useLocalStorage(
-    "coverPosition",
-    1100
-  );
+  const [screenSize, setScreenSize] = useLocalStorage('screenSize', 'iPhone 16');
+  const [coverSize, setCoverSize] = useLocalStorage('coverSize', 900);
+  const [cornerRadius, setCornerRadius] = useLocalStorage('cornerRadius', 100);
+  const [coverPosition, setCoverPosition] = useLocalStorage('coverPosition', 1100);
 
   // 屏幕尺寸配置
   const screenSizes = {
-    "iPhone 16": { width: 1179, height: 2556 },
-    "iPhone 16 Pro": { width: 1206, height: 2622 },
-    "iPhone 16 Pro Max": { width: 1320, height: 2868 },
-    "iPhone 16 Plus": { width: 1290, height: 2796 },
-    "iPhone 14 & 15 Pro Max": { width: 1290, height: 2796 },
-    "iPhone 14 & 15 Pro": { width: 1179, height: 2556 },
-    "iPhone 13 & 14": { width: 1170, height: 2532 },
+    'iPhone 16': { width: 1179, height: 2556 },
+    'iPhone 16 Pro': { width: 1206, height: 2622 },
+    'iPhone 16 Pro Max': { width: 1320, height: 2868 },
+    'iPhone 16 Plus': { width: 1290, height: 2796 },
+    'iPhone 14 & 15 Pro Max': { width: 1290, height: 2796 },
+    'iPhone 14 & 15 Pro': { width: 1179, height: 2556 },
+    'iPhone 13 & 14': { width: 1170, height: 2532 },
     Android: { width: 1236, height: 2751 },
   };
 
   const fetchCoverArt = async () => {
-    setError("");
-    setCoverUrl("");
+    setError('');
+    setCoverUrl('');
     setGradientColors([]);
 
     if (!url) {
-      setError("Please enter a Spotify URL");
+      setError('Please enter a Spotify URL');
       return;
     }
 
     try {
-      const response = await axios.post("/api/spotify-cover", { url });
+      const response = await axios.post('/api/spotify-cover', { url });
       setCoverUrl(response.data.coverUrl);
       setMainText(response.data.albumName);
     } catch (err) {
-      setError("Error fetching cover art. Please check the URL and try again.");
+      setError('Error fetching cover art. Please check the URL and try again.');
     }
   };
 
   useEffect(() => {
-    // 将所有依赖于 localStorage 的逻辑移到这里
     if (coverUrl) {
       const img = new Image();
-      img.crossOrigin = "Anonymous";
+      img.crossOrigin = 'Anonymous';
       img.src = coverUrl;
       img.onload = () => {
         const colorThief = new ColorThief();
@@ -99,10 +86,9 @@ const IPhoneWallpaper = () => {
 
   const drawWallpaper = (img, mainColor) => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
 
-    const { width: IPHONE_WIDTH, height: IPHONE_HEIGHT } =
-      screenSizes[screenSize];
+    const { width: IPHONE_WIDTH, height: IPHONE_HEIGHT } = screenSizes[screenSize];
     canvas.width = IPHONE_WIDTH;
     canvas.height = IPHONE_HEIGHT;
 
@@ -111,9 +97,9 @@ const IPhoneWallpaper = () => {
     const lighterColor = lightenColor(mainColor, 15);
     const darkerColor = darkenColor(mainColor, 15);
 
-    gradient.addColorStop(0, `rgb(${mainColor.join(",")})`);
-    gradient.addColorStop(0.5, `rgb(${lighterColor.join(",")})`);
-    gradient.addColorStop(1, `rgb(${darkerColor.join(",")})`);
+    gradient.addColorStop(0, `rgb(${mainColor.join(',')})`);
+    gradient.addColorStop(0.5, `rgb(${lighterColor.join(',')})`);
+    gradient.addColorStop(1, `rgb(${darkerColor.join(',')})`);
 
     // 绘制渐变背景
     ctx.fillStyle = gradient;
@@ -139,12 +125,7 @@ const IPhoneWallpaper = () => {
     ctx.lineTo(x + coverSize - cornerRadius, y);
     ctx.quadraticCurveTo(x + coverSize, y, x + coverSize, y + cornerRadius);
     ctx.lineTo(x + coverSize, y + coverSize - cornerRadius);
-    ctx.quadraticCurveTo(
-      x + coverSize,
-      y + coverSize,
-      x + coverSize - cornerRadius,
-      y + coverSize
-    );
+    ctx.quadraticCurveTo(x + coverSize, y + coverSize, x + coverSize - cornerRadius, y + coverSize);
     ctx.lineTo(x + cornerRadius, y + coverSize);
     ctx.quadraticCurveTo(x, y + coverSize, x, y + coverSize - cornerRadius);
     ctx.lineTo(x, y + cornerRadius);
@@ -152,11 +133,11 @@ const IPhoneWallpaper = () => {
     ctx.closePath();
 
     // 填充路径（这会应用阴影）
-    ctx.fillStyle = "white";
+    ctx.fillStyle = 'white';
     ctx.fill();
 
     // 移除阴影
-    ctx.shadowColor = "transparent";
+    ctx.shadowColor = 'transparent';
 
     // 裁剪和绘制图像
     ctx.clip();
@@ -197,9 +178,7 @@ const IPhoneWallpaper = () => {
 
   // 辅助函数：使颜色变浅
   const lightenColor = (color, amount) => {
-    return color.map((c) =>
-      Math.min(255, Math.round(c + (255 - c) * (amount / 100)))
-    );
+    return color.map((c) => Math.min(255, Math.round(c + (255 - c) * (amount / 100))));
   };
 
   //助函数：使颜色变深
@@ -209,8 +188,8 @@ const IPhoneWallpaper = () => {
 
   const downloadWallpaper = () => {
     const canvas = canvasRef.current;
-    const link = document.createElement("a");
-    link.download = "iphone-wallpaper.png";
+    const link = document.createElement('a');
+    link.download = 'iphone-wallpaper.png';
     link.href = canvas.toDataURL();
     link.click();
   };
@@ -221,21 +200,19 @@ const IPhoneWallpaper = () => {
       <div className="w-1/3 p-8 pl-24 overflow-y-auto flex flex-col justify-center gap-8">
         <div className="flex flex-col gap-4">
           <h1 className="text-3xl font-semibold tracking-tight">
-            Get{" "}
-            <span className="font-bold text-pink-500">Apple-Music-Like</span>{" "}
-            Wallpapers from{" "}
-            <span className="font-bold text-green-500">Spotify</span> Albums
+            Get High-Quality Wallpapers from <span className="font-bold text-green-500">Spotify</span> Albums
           </h1>
           <p>
-            1. Open the Spotify album page
+            Step 1: Navigate to your desired Spotify content page (Choose from{' '}
+            <span className="font-bold text-green-500">album, song, artist, podcast, or podcast episode</span>)
             <br />
-            2. Get its link by... <br />
-            &nbsp;&nbsp;a. Spotify browser: copy the URL
+            Step 2: Obtain the content link <br />
+            &nbsp;&nbsp;Option A: In Spotify's web player, simply copy the address bar URL
             <br />
-            &nbsp;&nbsp;b. Spotify desktop app: right click title &gt; share
-            &gt; copy link
+            &nbsp;&nbsp;Option B: Using the Spotify desktop application, right-click the content title, select 'Share',
+            then 'Copy Link'
             <br />
-            3. Paste link below
+            Step 3: Insert the copied link in the field provided below:
           </p>
           <Input
             className="w-full"
@@ -272,9 +249,7 @@ const IPhoneWallpaper = () => {
               </Select>
             </div>
             <div className="mb-4">
-              <label className="block mb-2 text-sm">
-                Cover Size: {coverSize}px
-              </label>
+              <label className="block mb-2 text-sm">Cover Size: {coverSize}px</label>
               <Slider
                 min={600}
                 max={1200}
@@ -285,9 +260,7 @@ const IPhoneWallpaper = () => {
               />
             </div>
             <div className="mb-4">
-              <label className="block mb-2 text-sm">
-                Corner Radius: {cornerRadius}px
-              </label>
+              <label className="block mb-2 text-sm">Corner Radius: {cornerRadius}px</label>
               <Slider
                 min={0}
                 max={200}
@@ -298,9 +271,7 @@ const IPhoneWallpaper = () => {
               />
             </div>
             <div className="mb-4">
-              <label className="block mb-2 text-sm">
-                Cover Position: {coverPosition}px from top
-              </label>
+              <label className="block mb-2 text-sm">Cover Position: {coverPosition}px from top</label>
               <Slider
                 min={0}
                 max={screenSizes[screenSize].height - coverSize}
@@ -313,23 +284,17 @@ const IPhoneWallpaper = () => {
           </div>
         </div>
         {error && (
-          <div
-            className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 text-sm"
-            role="alert"
-          >
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 text-sm" role="alert">
             <p>{error}</p>
           </div>
         )}
         <p className="text-sm text-gray-500">
-          built with ♥ by{" "}
+          built with ♥ by{' '}
           <a href="https://x.com/williamjinq" className="hover:text-green-500">
             @williamjinq
           </a>
-          , inspired by{" "}
-          <a
-            href="https://www.spotifycover.art/"
-            className="hover:text-green-500"
-          >
+          , inspired by{' '}
+          <a href="https://www.spotifycover.art/" className="hover:text-green-500">
             spotifycover.art
           </a>
           .
@@ -341,10 +306,7 @@ const IPhoneWallpaper = () => {
         {coverUrl && (
           <>
             <div className="shadow-2xl rounded-3xl overflow-hidden">
-              <canvas
-                ref={canvasRef}
-                style={{ width: "100%", height: "auto", maxWidth: "390px" }}
-              />
+              <canvas ref={canvasRef} style={{ width: '100%', height: 'auto', maxWidth: '390px' }} />
             </div>
             <Button onClick={downloadWallpaper}>Download Wallpaper</Button>
           </>
