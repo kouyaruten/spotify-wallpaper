@@ -146,7 +146,23 @@ const IPhoneWallpaper = () => {
       const scaledHeight = img.height * scale;
       const offsetX = (IPHONE_WIDTH - scaledWidth) / 2;
       const offsetY = (IPHONE_HEIGHT - scaledHeight) / 2;
-      ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
+
+      ctx.save();
+
+      ctx.translate(IPHONE_WIDTH / 2, IPHONE_HEIGHT / 2);
+
+      ctx.rotate(Math.PI);
+
+      ctx.drawImage(
+        img,
+        -scaledWidth / 2,
+        -scaledHeight / 2,
+        scaledWidth,
+        scaledHeight
+      );
+
+      ctx.restore();
+
       ctx.filter = "none";
 
       // 添加黑色透明蒙版
