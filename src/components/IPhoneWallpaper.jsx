@@ -210,16 +210,16 @@ const IPhoneWallpaper = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen bg-gray-100">
       {/* 左侧面板 */}
-      <div className="w-2/3 py-16 mx-auto overflow-y-auto flex flex-col justify-center gap-8">
+      <div className="w-2/3 py-16 px-4 mx-auto overflow-y-auto flex flex-col justify-center gap-8">
         <div className="flex flex-col gap-4">
-          <h1 className="text-3xl font-semibold tracking-tight">
+          <h1 className="text-4xl font-semibold tracking-tight">
             Get High-Quality Wallpapers from{" "}
             <span className="font-bold text-green-500">Spotify</span> Albums
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 leading-relaxed">
             Step 1: Navigate to your desired Spotify content page (Choose from{" "}
             <span className="font-bold text-green-500">
-              album, song, artist, podcast, or podcast episode
+              album, song, artist, podcast, playlist, or podcast episode
             </span>
             )
             <br />
@@ -233,7 +233,7 @@ const IPhoneWallpaper = () => {
             Step 3: Insert the copied link in the field provided below:
           </p>
           <Input
-            className="w-full"
+            className="p-4"
             type="text"
             value={url}
             onChange={(e) => setUrl(e.target.value)}

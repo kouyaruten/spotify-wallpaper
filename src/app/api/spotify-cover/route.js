@@ -26,6 +26,7 @@ async function getSpotifyInfo(type, id, accessToken) {
     track: `https://api.spotify.com/v1/tracks/${id}`,
     show: `https://api.spotify.com/v1/shows/${id}`,
     episode: `https://api.spotify.com/v1/episodes/${id}`,
+    playlist: `https://api.spotify.com/v1/playlists/${id}`,
   };
 
   const response = await fetch(endpoints[type], {
@@ -52,6 +53,10 @@ async function getSpotifyInfo(type, id, accessToken) {
     case "episode":
       coverUrl = data.images?.[0]?.url;
       name = data.name || data.show?.name;
+      break;
+    case "playlist":
+      coverUrl = data.images?.[0]?.url;
+      name = data.name;
       break;
   }
 
