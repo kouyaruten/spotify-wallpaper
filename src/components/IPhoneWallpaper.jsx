@@ -35,6 +35,7 @@ const IPhoneWallpaper = () => {
   const [coverSize, setCoverSize] = useLocalStorage('coverSize', 900);
   const [cornerRadius, setCornerRadius] = useLocalStorage('cornerRadius', 100);
   const [coverPosition, setCoverPosition] = useLocalStorage('coverPosition', 1100);
+  const [isCopied, setIsCopied] = useState(false);
 
   // 屏幕尺寸配置
   const screenSizes = {
@@ -188,6 +189,25 @@ const IPhoneWallpaper = () => {
     link.click();
   };
 
+  const copyToClipboard = async () => {
+    const canvas = canvasRef.current;
+    try {
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve));
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          'image/png': blob,
+        }),
+      ]);
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000); // 2秒后恢复原始状态
+    } catch (err) {
+      console.error('Failed to copy image to clipboard:', err);
+      setError('Failed to copy image to clipboard. Your browser might not support this feature.');
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen bg-gray-100">
       {/* 左侧面板 */}
@@ -301,7 +321,7 @@ const IPhoneWallpaper = () => {
 
         <p className="text-sm text-gray-500">
           built with ♥ by{' '}
-          <a href="https://x.com/williamjinq" target="_blank" className="hover:text-green-500">
+          <a href="https://bsky.app/profile/william-jin.bsky.social" target="_blank" className="hover:text-green-500">
             @williamjinq
           </a>
           , inspired by{' '}
@@ -316,14 +336,24 @@ const IPhoneWallpaper = () => {
         </p>
       </div>
 
-      {/* 右侧���板 */}
+      {/* 右侧面板 */}
       <div className="p-8 flex flex-col items-center justify-center gap-4">
         {coverUrl && (
           <>
             <div className="shadow-2xl rounded-3xl overflow-hidden">
               <canvas ref={canvasRef} style={{ width: '100%', height: 'auto', maxWidth: '390px' }} />
             </div>
-            <Button onClick={downloadWallpaper}>Download Wallpaper</Button>
+            <div className="flex gap-4">
+              <Button onClick={downloadWallpaper}>Download Wallpaper</Button>
+              <Button
+                variant="outline"
+                onClick={copyToClipboard}
+                disabled={isCopied}
+                className={isCopied ? 'bg-green-100 text-green-700 hover:bg-green-100' : ''}
+              >
+                {isCopied ? 'Copied!' : 'Copy to Clipboard'}
+              </Button>
+            </div>
           </>
         )}
       </div>
