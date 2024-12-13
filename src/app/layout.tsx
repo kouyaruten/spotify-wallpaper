@@ -17,6 +17,11 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Spotpaper",
   description: "Get high-quality wallpapers from Spotify albums",
+  openGraph: {
+    title: "Spotpaper",
+    description: "Get high-quality wallpapers from Spotify albums",
+    images: ["/images/og-image.png"],
+  },
 };
 
 export default function RootLayout({
