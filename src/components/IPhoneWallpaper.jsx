@@ -32,21 +32,21 @@ const IPhoneWallpaper = () => {
 
   // 新增状态
   const [screenSize, setScreenSize] = useLocalStorage('screenSize', 'iPhone 16');
-  const [coverSize, setCoverSize] = useLocalStorage('coverSize', 900);
-  const [cornerRadius, setCornerRadius] = useLocalStorage('cornerRadius', 100);
-  const [coverPosition, setCoverPosition] = useLocalStorage('coverPosition', 1100);
+  const [coverSize, setCoverSize] = useLocalStorage('coverSize', 900 * 3);
+  const [cornerRadius, setCornerRadius] = useLocalStorage('cornerRadius', 100 * 3);
+  const [coverPosition, setCoverPosition] = useLocalStorage('coverPosition', 1100 * 3);
   const [isCopied, setIsCopied] = useState(false);
 
   // 屏幕尺寸配置
   const screenSizes = {
-    'iPhone 16': { width: 1179, height: 2556 },
-    'iPhone 16 Pro': { width: 1206, height: 2622 },
-    'iPhone 16 Pro Max': { width: 1320, height: 2868 },
-    'iPhone 16 Plus': { width: 1290, height: 2796 },
-    'iPhone 14 & 15 Pro Max': { width: 1290, height: 2796 },
-    'iPhone 14 & 15 Pro': { width: 1179, height: 2556 },
-    'iPhone 13 & 14': { width: 1170, height: 2532 },
-    Android: { width: 1236, height: 2751 },
+    'iPhone 16': { width: 1179 * 3, height: 2556 * 3 },
+    'iPhone 16 Pro': { width: 1206 * 3, height: 2622 * 3 },
+    'iPhone 16 Pro Max': { width: 1320 * 3, height: 2868 * 3 },
+    'iPhone 16 Plus': { width: 1290 * 3, height: 2796 * 3 },
+    'iPhone 14 & 15 Pro Max': { width: 1290 * 3, height: 2796 * 3 },
+    'iPhone 14 & 15 Pro': { width: 1179 * 3, height: 2556 * 3 },
+    'iPhone 13 & 14': { width: 1170 * 3, height: 2532 * 3 },
+    Android: { width: 1236 * 3, height: 2751 * 3 },
   };
 
   const [wallpaperMode, setWallpaperMode] = useState('gradient');
@@ -93,6 +93,10 @@ const IPhoneWallpaper = () => {
     canvas.width = IPHONE_WIDTH;
     canvas.height = IPHONE_HEIGHT;
 
+    // Set high quality scaling
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
     if (wallpaperMode === 'gradient') {
       // 创建更平滑的渐变
       const gradient = ctx.createLinearGradient(0, 0, 0, IPHONE_HEIGHT);
@@ -119,7 +123,7 @@ const IPhoneWallpaper = () => {
       ctx.fillRect(0, 0, IPHONE_WIDTH, IPHONE_HEIGHT);
     } else if (wallpaperMode === 'glassmorphism') {
       // 毛玻璃效果
-      ctx.filter = 'blur(200px)';
+      ctx.filter = 'blur(600px)';
       const scale = Math.max(IPHONE_WIDTH / img.width, IPHONE_HEIGHT / img.height);
       const scaledWidth = img.width * scale;
       const scaledHeight = img.height * scale;
@@ -269,33 +273,33 @@ const IPhoneWallpaper = () => {
               </Select>
             </div>
             <div className="mb-4">
-              <label className="block mb-2 text-sm">Cover Size: {coverSize}px</label>
+              <label className="block mb-2 text-sm">Cover Size: {coverSize / 3}px</label>
               <Slider
-                min={600}
-                max={1200}
-                step={10}
+                min={600 * 3}
+                max={1200 * 3}
+                step={30}
                 value={[coverSize]}
                 onValueChange={(e) => setCoverSize(e[0])}
                 className="w-full"
               />
             </div>
             <div className="mb-4">
-              <label className="block mb-2 text-sm">Corner Radius: {cornerRadius}px</label>
+              <label className="block mb-2 text-sm">Corner Radius: {cornerRadius / 3}px</label>
               <Slider
                 min={0}
-                max={200}
-                step={10}
+                max={200 * 3}
+                step={30}
                 value={[cornerRadius]}
                 onValueChange={(e) => setCornerRadius(e[0])}
                 className="w-full"
               />
             </div>
             <div className="mb-4">
-              <label className="block mb-2 text-sm">Cover Position: {coverPosition}px from top</label>
+              <label className="block mb-2 text-sm">Cover Position: {coverPosition / 3} px from top</label>
               <Slider
                 min={0}
                 max={screenSizes[screenSize].height - coverSize}
-                step={10}
+                step={30}
                 value={[coverPosition]}
                 onValueChange={(e) => setCoverPosition(e[0])}
                 className="w-full"
@@ -341,7 +345,15 @@ const IPhoneWallpaper = () => {
         {coverUrl && (
           <>
             <div className="shadow-2xl rounded-3xl overflow-hidden">
-              <canvas ref={canvasRef} style={{ width: '100%', height: 'auto', maxWidth: '390px' }} />
+              <canvas
+                ref={canvasRef}
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  maxWidth: '390px',
+                  imageRendering: 'high-quality',
+                }}
+              />
             </div>
             <div className="flex gap-4">
               <Button onClick={downloadWallpaper}>Download Wallpaper</Button>
